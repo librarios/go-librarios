@@ -51,7 +51,7 @@ func connectSqlite3(filename string) (*gorm.DB, error) {
 }
 
 func connectMysql(host, database, username, password string, port int) (*gorm.DB, error) {
-	args := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&serverTimezone=UTC",
+	args := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&serverTimezone=UTC&parseTime=True",
 		username,
 		password,
 		host,

@@ -11,5 +11,6 @@ type Book struct {
 	Translators   []string
 	Price         float64
 	PriceCurrency string
+	Pages         int32
 	IsSale        bool
 }
