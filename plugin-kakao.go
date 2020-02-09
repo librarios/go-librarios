@@ -83,15 +83,8 @@ func (k *Kakao) searhBook(target string, query string) ([]*Book, error) {
 	return books, nil
 }
 
-func (k *Kakao) FindByISBN(isbn string) (*Book, error) {
-	books, err := k.searhBook("isbn", isbn)
-	if err != nil {
-		return nil, err
-	}
-	if len(books) == 0 {
-		return nil, nil
-	}
-	return books[0], nil
+func (k *Kakao) FindByISBN(isbn string) ([]*Book, error) {
+	return k.searhBook("isbn", isbn)
 }
 
 func (k *Kakao) FindByTitle(title string) ([]*Book, error) {

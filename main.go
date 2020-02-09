@@ -35,8 +35,7 @@ func main() {
 	// router
 	r := gin.Default()
 
-	r.GET("/book/isbn/:isbn", FindByISBN)
-	r.GET("/book/search", FindByTitle)
+	r.GET("/book/search", SearchBook)
 	if err := r.Run(fmt.Sprintf(":%d", config.Port)); err != nil {
 		log.Panicf("failed to start server on %d port. error: %v", config.Port, err)
 	}
