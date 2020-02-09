@@ -25,6 +25,12 @@ func main() {
 		}
 	}
 
+	// connect to DB
+	dbConn, err = ConnectDB(config.DB)
+	if err != nil {
+		log.Panicf("failed to connect DB. err: %v", err)
+	}
+
 	// set gin mode
 	ginMode := os.Getenv("GIN_MODE")
 	if ginMode == "" {

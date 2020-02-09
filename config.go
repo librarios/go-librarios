@@ -14,6 +14,7 @@ type Map map[string]interface{}
 type Config struct {
 	Port    int            `yaml:"port"`
 	Plugins map[string]Map `yaml:"plugins"`
+	DB      Map            `yaml:"db"`
 }
 
 // LoadConfigFile reads configuration file

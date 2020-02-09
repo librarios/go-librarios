@@ -2,3 +2,6 @@ port: 8080
 plugins:
   kakao:
     apiKey: af0cd46c81f8f1a1880adcb051a835b5
+db:
+  dialect: sqlite3
+  filename: ./librarios.db

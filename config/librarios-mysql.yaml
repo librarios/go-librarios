@@ -1,0 +1,11 @@
+port: 8080
+plugins:
+  kakao:
+    apiKey: apikey
+db:
+  dialect: mysql
+  host: localhost
+  port: 3306
+  database: librarios
+  username: root
+  password: root
