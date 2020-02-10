@@ -23,10 +23,10 @@ type Book struct {
 
 type OwnedBook struct {
 	gorm.Model
-	ISBN         string         `gorm:"size:13;unique"`
-	Owner        sql.NullString `gorm:"size:255"`
-	AcquiredAt   sql.NullTime
-	ScannedAt    sql.NullTime
-	PaidPrice    sql.NullFloat64
-	ScannedPages sql.NullInt32
+	ISBN        string         `gorm:"size:13;unique"`
+	Owner       sql.NullString `gorm:"size:255"`
+	AcquiredAt  sql.NullTime
+	ScannedAt   sql.NullTime
+	PaidPrice   sql.NullFloat64
+	ActualPages sql.NullInt32
 }

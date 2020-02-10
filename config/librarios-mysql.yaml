@@ -9,3 +9,4 @@ db:
   database: librarios
   username: root
   password: root
+  autoMigrate: true

@@ -6,38 +6,51 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/librarios/go-librarios/model"
 	"log"
 )
 
 var dbConn *gorm.DB
 
 func ConnectDB(props Map) (*gorm.DB, error) {
-	dialect, exists := props["dialect"]
-	if !exists {
+	dialect, ok := props["dialect"]
+	if !ok {
 		return nil, errors.New("DB dialect is not set")
 	}
 
 	strDialect := dialect.(string)
 
+	var db *gorm.DB
+	var err error
+
 	switch strDialect {
 	case "sqlite3":
 		filename := props["filename"].(string)
-		return connectSqlite3(filename)
+		db, err = connectSqlite3(filename)
 
 	case "mariadb":
 		fallthrough
 	case "mysql":
-		return connectMysql(
+		db, err = connectMysql(
 			props["host"].(string),
 			props["database"].(string),
 			props["username"].(string),
 			props["password"].(string),
 			props["port"].(int),
-			)
+		)
 
 	default:
 		return nil, errors.New(fmt.Sprintf("unsupported dialect: %s", dialect))
 	}
+
+	// auto-migrate
+	if err == nil {
+		if props["autoMigrate"] == true {
+			autoMigrateDB(db)
+		}
+	}
+
+	return db, err
 }
 
 func connectSqlite3(filename string) (*gorm.DB, error) {
@@ -69,4 +82,12 @@ func connectMysql(host, database, username, password string, port int) (*gorm.DB
 	log.Printf("connected to mysql: %s@%s:%d/%s", username, host, port, database)
 
 	return db, nil
+}
+
+func autoMigrateDB(db *gorm.DB) {
+	db.AutoMigrate(
+		&model.Book{},
+		&model.OwnedBook{},
+	)
+	log.Println("DB auto migration finished")
 }

@@ -5,3 +5,4 @@ plugins:
 db:
   dialect: sqlite3
   filename: ./librarios.db
+  autoMigrate: true
