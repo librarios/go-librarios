@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"github.com/google/go-cmp/cmp"
@@ -24,16 +24,16 @@ plugins:
 	}
 	expected := &Config{
 		Port: 80,
-		Plugins: map[string]Map{
-			"foo": Map{
+		Plugins: map[string]map[string]interface{}{
+			"foo": {
 				"enabled":   true,
 				"int-value": 10,
 			},
-			"bar": Map{
+			"bar": {
 				"enabled":     false,
 				"float-value": 10.2,
 			},
-			"foobar": Map{
+			"foobar": {
 				"enabled": false,
 			},
 		},

@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"errors"
@@ -6,13 +6,13 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/librarios/go-librarios/model"
+	"github.com/librarios/go-librarios/app/model"
 	"log"
 )
 
 var dbConn *gorm.DB
 
-func ConnectDB(props Map) (*gorm.DB, error) {
+func ConnectDB(props map[string]interface{}) (*gorm.DB, error) {
 	dialect, ok := props["dialect"]
 	if !ok {
 		return nil, errors.New("DB dialect is not set")

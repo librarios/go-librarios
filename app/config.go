@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"gopkg.in/yaml.v2"
@@ -9,12 +9,10 @@ var (
 	DefaultPort = 8080
 )
 
-type Map map[string]interface{}
-
 type Config struct {
-	Port    int            `yaml:"port"`
-	Plugins map[string]Map `yaml:"plugins"`
-	DB      Map            `yaml:"db"`
+	Port    int                               `yaml:"port"`
+	Plugins map[string]map[string]interface{} `yaml:"plugins"`
+	DB      map[string]interface{}            `yaml:"db"`
 }
 
 // LoadConfigFile reads configuration file

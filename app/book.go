@@ -1,6 +1,6 @@
-package main
+package app
 
-type Book struct {
+type KakaoBookResponse struct {
 	ISBN          string
 	Title         string
 	Contents      string

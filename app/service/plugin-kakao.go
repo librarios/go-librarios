@@ -1,10 +1,14 @@
-package main
+package service
 
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/librarios/go-librarios/app/model"
+	"github.com/librarios/go-librarios/app/util"
+	"gopkg.in/guregu/null.v3"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 // https://developers.kakao.com/docs/restapi/search#%EC%B1%85-%EA%B2%80%EC%83%89
@@ -36,7 +40,7 @@ func (k *Kakao) SetProperties(p map[string]interface{}) {
 	}
 }
 
-func (k *Kakao) searhBook(target string, query string) ([]*Book, error) {
+func (k *Kakao) searhBook(target string, query string) ([]*model.Book, error) {
 	u := fmt.Sprintf("https://dapi.kakao.com/v3/search/book?target=%s&query=%s", target, query)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
@@ -49,7 +53,9 @@ func (k *Kakao) searhBook(target string, query string) ([]*Book, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -61,21 +67,20 @@ func (k *Kakao) searhBook(target string, query string) ([]*Book, error) {
 		return nil, err
 	}
 
-	books := make([]*Book, 0)
+	books := make([]*model.Book, 0)
 
 	for _, doc := range kakaoResp.Documents {
-		book := Book{
-			ISBN:          doc.Isbn,
-			Title:         doc.Title,
-			Contents:      doc.Contents,
-			Url:           doc.Url,
-			PubDate:       doc.Datetime,
-			Authors:       doc.Authors,
-			Publisher:     doc.Publisher,
-			Translators:   doc.Translators,
-			Price:         float64(doc.Price),
-			PriceCurrency: "KRW",
-			IsSale:        doc.Status == "정상판매",
+		book := model.Book{
+			ISBN:        doc.Isbn,
+			Title:       doc.Title,
+			Contents:    null.StringFrom(doc.Contents),
+			Url:         null.StringFrom(doc.Url),
+			PubDate:     util.NullTimeFromString(doc.Datetime),
+			Authors:     null.StringFrom(strings.Join(doc.Authors, ",")),
+			Publisher:   null.StringFrom(doc.Publisher),
+			Translators: null.StringFrom(strings.Join(doc.Translators, ",")),
+			Price:       null.FloatFrom(float64(doc.Price)),
+			Currency:    null.StringFrom("KRW"),
 		}
 		books = append(books, &book)
 	}
@@ -83,19 +88,19 @@ func (k *Kakao) searhBook(target string, query string) ([]*Book, error) {
 	return books, nil
 }
 
-func (k *Kakao) FindByISBN(isbn string) ([]*Book, error) {
+func (k *Kakao) FindByISBN(isbn string) ([]*model.Book, error) {
 	return k.searhBook("isbn", isbn)
 }
 
-func (k *Kakao) FindByTitle(title string) ([]*Book, error) {
+func (k *Kakao) FindByTitle(title string) ([]*model.Book, error) {
 	return k.searhBook("title", title)
 }
 
-func (k *Kakao) FindByPublisher(publisher string) ([]*Book, error) {
+func (k *Kakao) FindByPublisher(publisher string) ([]*model.Book, error) {
 	return k.searhBook("publisher", publisher)
 }
 
-func (k *Kakao) FindByPerson(person string) ([]*Book, error) {
+func (k *Kakao) FindByPerson(person string) ([]*model.Book, error) {
 	return k.searhBook("person", person)
 }
 

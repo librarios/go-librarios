@@ -1,4 +1,4 @@
-package main
+package service
 
 type PluginManager interface {
 	Register(def PluginDef)

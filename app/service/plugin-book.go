@@ -1,12 +1,15 @@
-package main
+package service
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/librarios/go-librarios/app/model"
+)
 
 type BookPlugin interface {
-	FindByISBN(string) ([]*Book, error)
-	FindByPerson(string) ([]*Book, error)
-	FindByPublisher(string) ([]*Book, error)
-	FindByTitle(string) ([]*Book, error)
+	FindByISBN(string) ([]*model.Book, error)
+	FindByPerson(string) ([]*model.Book, error)
+	FindByPublisher(string) ([]*model.Book, error)
+	FindByTitle(string) ([]*model.Book, error)
 }
 
 func SearchBook(c *gin.Context) {
@@ -15,7 +18,7 @@ func SearchBook(c *gin.Context) {
 	person := c.Query("person")
 	title := c.Query("title")
 
-	var fn func(string) ([]*Book, error) = nil
+	var fn func(string) ([]*model.Book, error) = nil
 
 	for _, plugin := range pluginManager.GetPluginsByType(PluginTypeBook) {
 		bookPlugin := plugin.(BookPlugin)
@@ -33,7 +36,7 @@ func SearchBook(c *gin.Context) {
 
 		books, err := fn(title)
 		if err != nil {
-			c.Error(err)
+			_ = c.Error(err)
 			return
 		}
 
