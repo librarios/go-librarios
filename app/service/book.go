@@ -5,11 +5,25 @@ import (
 	"github.com/librarios/go-librarios/app/model"
 )
 
+type IBookService interface {
+	Search(isbn string,
+		publisher string,
+		person string,
+		title string,
+	) ([]*model.Book, error)
+}
+
 type BookService struct {
 	bookPlugins []BookPlugin
 }
 
-func NewBookService(bookPlugins []BookPlugin) *BookService {
+func NewBookService() IBookService {
+	bookPlugins := make([]BookPlugin, 0)
+	for _, plugin := range pluginManager.GetPluginsByType(PluginTypeBook) {
+		bookPlugin := plugin.(BookPlugin)
+		bookPlugins = append(bookPlugins, bookPlugin)
+	}
+
 	return &BookService{
 		bookPlugins: bookPlugins,
 	}

@@ -31,6 +31,9 @@ func StartServer(configFilename string) {
 	}
 	gin.SetMode(ginMode)
 
+	// services
+	bookService := service.NewBookService()
+
 	// router
-	controller.InitEndpoints(config.Port)
+	controller.InitEndpoints(config.Port, bookService)
 }

@@ -7,12 +7,16 @@ import (
 	"log"
 )
 
-func InitEndpoints(port int) {
+func InitEndpoints(
+	port int,
+	bookService service.IBookService,
+) {
 	r := gin.Default()
 
-	r.GET("/book/search", service.SearchBook)
+	r.GET("/book/search", searchBookHandlerFn(bookService))
+	r.POST("/book", addBookHandlerFn(bookService))
+
 	if err := r.Run(fmt.Sprintf(":%d", port)); err != nil {
 		log.Panicf("failed to start server on %d port. error: %v", port, err)
 	}
-
 }
