@@ -39,6 +39,10 @@ clean:
 run: build
 	@./$(BINARY)
 
+# Test
+test:
+	go test ./...
+
 # Install dependencies to vendor/
 vendor:
 	@$(GOMOD) vendor
