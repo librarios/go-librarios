@@ -10,3 +10,4 @@ db:
   username: root
   password: root
   autoMigrate: true
+  showSql: true

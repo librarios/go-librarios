@@ -1,7 +1,7 @@
-package service
+package plugin
 
 const (
-	PluginTypeBook = "book"
+	TypeBook = "book"
 )
 
 type Plugin interface {

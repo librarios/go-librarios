@@ -1,4 +1,4 @@
-package app
+package service
 
 import (
 	"errors"
@@ -11,6 +11,15 @@ import (
 )
 
 var dbConn *gorm.DB
+
+func InitDB(props map[string]interface{}) error {
+	conn, err := ConnectDB(props)
+	if err != nil {
+		return err
+	}
+	dbConn = conn
+	return nil
+}
 
 func ConnectDB(props map[string]interface{}) (*gorm.DB, error) {
 	dialect, ok := props["dialect"]
@@ -43,11 +52,18 @@ func ConnectDB(props map[string]interface{}) (*gorm.DB, error) {
 		return nil, errors.New(fmt.Sprintf("unsupported dialect: %s", dialect))
 	}
 
+	if err != nil {
+		return db, err
+	}
+
 	// auto-migrate
-	if err == nil {
-		if props["autoMigrate"] == true {
-			autoMigrateDB(db)
-		}
+	if props["autoMigrate"] == true {
+		autoMigrateDB(db)
+	}
+
+	// log mode
+	if props["showSql"] == true {
+		db.LogMode(true)
 	}
 
 	return db, err

@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/librarios/go-librarios/app/controller"
+	"github.com/librarios/go-librarios/app/plugin"
 	"github.com/librarios/go-librarios/app/service"
 	"log"
 	"os"
@@ -16,11 +17,10 @@ func StartServer(configFilename string) {
 	log.Printf("Loaded: %s\n", configFilename)
 
 	// init plugins
-	service.InitPlugins(config.Plugins)
+	plugin.InitPlugins(config.Plugins)
 
 	// connect to DB
-	dbConn, err = ConnectDB(config.DB)
-	if err != nil {
+	if err = service.InitDB(config.DB); err != nil {
 		log.Panicf("failed to connect DB. err: %v", err)
 	}
 

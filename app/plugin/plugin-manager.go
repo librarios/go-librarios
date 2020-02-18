@@ -1,4 +1,4 @@
-package service
+package plugin
 
 type PluginManager interface {
 	Register(def PluginDef)
@@ -7,7 +7,7 @@ type PluginManager interface {
 }
 
 var (
-	pluginManager = DefaultPluginManager{
+	defaultPluginManager = DefaultPluginManager{
 		plugins: make(map[string]Plugin),
 	}
 )
@@ -19,25 +19,28 @@ type DefaultPluginManager struct {
 // Register plugin
 func (m DefaultPluginManager) Register(def PluginDef) {
 	if def.NewFunc != nil {
-		plugin := def.NewFunc()
-		name := plugin.Name()
-		m.plugins[name] = plugin
+		p := def.NewFunc()
+		name := p.Name()
+		m.plugins[name] = p
 	}
 }
 
 func (m DefaultPluginManager) GetPluginByName(name string) (Plugin, bool) {
-	plugin, ok := m.plugins[name]
-	return plugin, ok
+	p, ok := m.plugins[name]
+	return p, ok
 }
 
 // GetPluginsByType returns plugins with matching pluginType
 func (m DefaultPluginManager) GetPluginsByType(pluginType string) []Plugin {
 	result := make([]Plugin, 0)
-	for _, plugin := range m.plugins {
-		if pluginType == plugin.Type() {
-			result = append(result, plugin)
+	for _, p := range m.plugins {
+		if pluginType == p.Type() {
+			result = append(result, p)
 		}
 	}
 	return result
 }
 
+func GetPluginsByType(pluginType string) []Plugin {
+	return defaultPluginManager.GetPluginsByType(pluginType)
+}
