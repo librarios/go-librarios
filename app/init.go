@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/librarios/go-librarios/app/config"
 	"github.com/librarios/go-librarios/app/controller"
 	"github.com/librarios/go-librarios/app/plugin"
 	"github.com/librarios/go-librarios/app/service"
@@ -10,7 +11,7 @@ import (
 )
 
 func StartServer(configFilename string) {
-	config, err := LoadConfigFile(configFilename)
+	config, err := config.LoadConfigFile(configFilename)
 	if err != nil {
 		log.Panicf("failed to load config file: %s. error: %v", configFilename, err)
 	}

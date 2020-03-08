@@ -12,12 +12,12 @@ import (
 
 type AddBookCommand struct {
 	ISBN         string  `json:"isbn"`
-	Owner        string  `json:"owner"`
-	AcquiredAt   string  `json:"acquiredAt"`
-	ScannedAt    string  `json:"scannedAt"`
-	PaidPrice    float64 `json:"paidPrice"`
-	ActualPages  int64   `json:"actualPages"`
-	HasPaperBook bool    `json:"hasPaperBook"`
+	Owner        string  `json:"owner,omitempty"`
+	AcquiredAt   string  `json:"acquiredAt,omitempty"`
+	ScannedAt    string  `json:"scannedAt,omitempty"`
+	PaidPrice    float64 `json:"paidPrice,omitempty"`
+	ActualPages  int64   `json:"actualPages,omitempty"`
+	HasPaperBook bool    `json:"hasPaperBook,omitempty"`
 }
 
 type IBookService interface {
