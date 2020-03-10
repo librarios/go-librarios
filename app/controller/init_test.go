@@ -16,6 +16,88 @@ import (
 	"testing"
 )
 
+type TestServer struct {
+	r           *gin.Engine
+	bookService service.IBookService
+}
+
+func (t *TestServer) Init() {
+	t.r = gin.New()
+	t.bookService = service.NewBookService()
+
+	addEndpoints(t.r, t.bookService)
+}
+
+func (t *TestServer) Get(url string, result interface{}) *httptest.ResponseRecorder {
+	return t.request(http.MethodGet, url, result)
+}
+
+func (t *TestServer) Patch(url string, body interface{}, result interface{}) *httptest.ResponseRecorder {
+	return t.requestJSON(http.MethodPatch, url, body, result)
+}
+
+func (t *TestServer) Post(url string, body interface{}, result interface{}) *httptest.ResponseRecorder {
+	return t.requestJSON(http.MethodPost, url, body, result)
+}
+
+func (t *TestServer) requestJSON(
+	method string,
+	url string,
+	body interface{},
+	result interface{},
+) *httptest.ResponseRecorder {
+	var reader io.Reader
+	switch body.(type) {
+	case string:
+		reader = strings.NewReader(body.(string))
+		break
+	default:
+		jsonValue, e := json.Marshal(body)
+		if e != nil {
+			panic(e)
+		}
+		reader = bytes.NewBuffer(jsonValue)
+		break
+	}
+
+	req := httptest.NewRequest(method, url, reader)
+	req.Header.Set("Content-Type", "application/json")
+	rw := httptest.NewRecorder()
+
+	t.r.ServeHTTP(rw, req)
+
+	// parse result JSON data
+	if result != nil {
+		if err := json.NewDecoder(rw.Body).Decode(result); err != nil {
+			panic(err)
+		}
+	}
+
+	return rw
+}
+
+func (t *TestServer) request(
+	method string,
+	url string,
+	result interface{},
+) *httptest.ResponseRecorder {
+	req := httptest.NewRequest(method, url, nil)
+	rw := httptest.NewRecorder()
+	t.r.ServeHTTP(rw, req)
+
+	// parse result JSON data
+	if result != nil {
+		if err := json.NewDecoder(rw.Body).Decode(result); err != nil {
+			panic(err)
+		}
+	}
+
+	return rw
+}
+
+var testServer *TestServer
+
+// TestMain is test entryPoint
 func TestMain(m *testing.M) {
 	setup()
 	retCode := m.Run()
@@ -38,62 +120,10 @@ func setup() {
 	if err = service.InitDB(c.DB); err != nil {
 		log.Panicf("failed to connect DB. err: %v", err)
 	}
+
+	testServer = &TestServer{}
+	testServer.Init()
 }
 
 func teardown() {
-
-}
-
-// makeGet makes a GET request
-func makeGet(url string) (req *http.Request, write *httptest.ResponseRecorder) {
-	return makeRequest(http.MethodGet, url)
-}
-
-// makePostJSON makes a POST request with JSON content-type
-func makePostJSON(url string, body interface{}) (req *http.Request, write *httptest.ResponseRecorder, err error) {
-	return makeRequestJSON(http.MethodPost, url, body)
-}
-
-// makeDelete makes a request
-func makeRequest(method, url string) (req *http.Request, write *httptest.ResponseRecorder) {
-	r := httptest.NewRequest(method, url, nil)
-	w := httptest.NewRecorder()
-	return r, w
-}
-
-// makeRequestJSON makes a request with JSON content-type
-func makeRequestJSON(method, url string, body interface{}) (req *http.Request, write *httptest.ResponseRecorder, err error) {
-	var reader io.Reader
-
-	switch body.(type) {
-	case string:
-		reader = strings.NewReader(body.(string))
-		break
-	default:
-		jsonValue, e := json.Marshal(body)
-		if e != nil {
-			return nil, nil, e
-		}
-		reader = bytes.NewBuffer(jsonValue)
-		break
-	}
-
-	r := httptest.NewRequest(method, url, reader)
-	r.Header.Set("Content-Type", "application/json")
-	w := httptest.NewRecorder()
-	return r, w, nil
-}
-
-func newRouter() *gin.Engine {
-	r := gin.New()
-
-	return r
-}
-
-func parseJSON(resp *httptest.ResponseRecorder, v interface{}) error {
-	return json.NewDecoder(resp.Body).Decode(v)
-}
-
-func isIntegrationTest() bool {
-	return os.Getenv("INTEGRATION_TEST") == "true"
 }

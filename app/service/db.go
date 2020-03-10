@@ -56,14 +56,14 @@ func ConnectDB(props map[string]interface{}) (*gorm.DB, error) {
 		return db, err
 	}
 
-	// auto-migrate
-	if props["autoMigrate"] == true {
-		autoMigrateDB(db)
-	}
-
 	// log mode
 	if props["showSql"] == true {
 		db.LogMode(true)
+	}
+
+	// auto-migrate
+	if props["autoMigrate"] == true {
+		autoMigrateDB(db)
 	}
 
 	return db, err
@@ -105,5 +105,5 @@ func autoMigrateDB(db *gorm.DB) {
 		&model.Book{},
 		&model.OwnedBook{},
 	)
-	log.Println("DB auto migration finished")
+	log.Println("DB auto migration finished.")
 }

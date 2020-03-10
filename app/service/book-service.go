@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/librarios/go-librarios/app/model"
 	"github.com/librarios/go-librarios/app/plugin"
@@ -11,13 +12,34 @@ import (
 )
 
 type AddBookCommand struct {
-	ISBN         string  `json:"isbn"`
-	Owner        string  `json:"owner,omitempty"`
-	AcquiredAt   string  `json:"acquiredAt,omitempty"`
-	ScannedAt    string  `json:"scannedAt,omitempty"`
-	PaidPrice    float64 `json:"paidPrice,omitempty"`
-	ActualPages  int64   `json:"actualPages,omitempty"`
-	HasPaperBook bool    `json:"hasPaperBook,omitempty"`
+	ISBN         string
+	Owner        string
+	AcquiredAt   string
+	ScannedAt    string
+	PaidPrice    float64
+	ActualPages  int64
+	HasPaperBook bool
+}
+
+type UpdateBookCommand struct {
+	ISBN          string
+	Owner         null.String
+	AcquiredAt    null.String
+	ScannedAt     null.String
+	PaidPrice     null.Float
+	ActualPages   null.Int
+	HasPaperBook  null.Bool
+	Title         null.String
+	OriginalISBN  null.String
+	OriginalTitle null.String
+	Contents      null.String
+	Url           null.String
+	PubDate       null.Time
+	Authors       null.String
+	Translators   null.String
+	Publisher     null.String
+	Price         null.Float
+	Currency      null.String
 }
 
 type IBookService interface {
@@ -28,6 +50,8 @@ type IBookService interface {
 	) ([]*plugin.Book, error)
 
 	AddBook(book AddBookCommand) (*model.Book, error)
+	UpdateBook(isbn string, update gin.H) (*model.Book, error)
+	UpdateOwnedBook(isbn string, update gin.H) (*model.OwnedBook, error)
 }
 
 type BookService struct {
@@ -132,13 +156,16 @@ func (s *BookService) AddBook(cmd AddBookCommand) (*model.Book, error) {
 		}
 
 		// add ownedBook
-		ownedBook := model.OwnedBook{}
+		ownedBook, err := FindOwnedBookByISBN(cmd.ISBN)
+		if err != nil {
+			return err
+		}
+
 		insert := false
-		if err := tx.Where(&model.OwnedBook{ISBN: cmd.ISBN}).First(&ownedBook).Error; err != nil {
-			if !gorm.IsRecordNotFoundError(err) {
-				return err
+		if ownedBook == nil {
+			ownedBook = &model.OwnedBook{
+				ISBN: bookModel.ISBN13,
 			}
-			ownedBook.ISBN = bookModel.ISBN13
 			insert = true
 		}
 		ownedBook.Owner = util.NullString(cmd.Owner)
@@ -149,12 +176,91 @@ func (s *BookService) AddBook(cmd AddBookCommand) (*model.Book, error) {
 		ownedBook.HasPaperBook = cmd.HasPaperBook
 
 		if insert {
-			tx.Create(&ownedBook)
+			tx.Create(ownedBook)
 		} else {
-			tx.Save(&ownedBook)
+			tx.Save(ownedBook)
 		}
 		return nil
 	})
 
 	return &bookModel, err
 }
+
+func (s *BookService) UpdateBook(isbn string, update gin.H) (*model.Book, error) {
+	var err error
+	book, err := FindBookByISBN(isbn)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := dbConn.Model(book).Updates(update).Error; err != nil {
+		return nil, err
+	}
+
+	return book, nil
+}
+
+func (s *BookService) UpdateOwnedBook(isbn string, update gin.H) (*model.OwnedBook, error) {
+	var err error
+	book, err := FindOwnedBookByISBN(isbn)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := dbConn.Model(book).Updates(update).Error; err != nil {
+		return nil, err
+	}
+
+	return book, nil
+}
+
+func FindBookByISBN(isbn string) (*model.Book, error) {
+	book := &model.Book{}
+	book.ISBN13 = isbn
+
+	if err := dbConn.Where(book).First(book).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return book, nil
+}
+
+func FindOwnedBookByISBN(isbn string) (*model.OwnedBook, error) {
+	book := &model.OwnedBook{}
+	book.ISBN = isbn
+
+	if err := dbConn.Where(book).First(book).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return book, nil
+}
+
+func InsertBook(book *model.Book) (*model.Book, error) {
+	if err := dbConn.Create(book).Error; err != nil {
+		return nil, err
+	}
+	return book, nil
+}
+
+func InsertOwnedBook(book *model.OwnedBook) (*model.OwnedBook, error) {
+	if err := dbConn.Create(book).Error; err != nil {
+		return nil, err
+	}
+	return book, nil
+}
+
+func DeleteAllBooks() error {
+	return dbConn.Unscoped().Delete(model.Book{}).Error
+}
+
+func DeleteAllOwnedBooks() error {
+	return dbConn.Unscoped().Delete(model.OwnedBook{}).Error
+}
+

@@ -44,3 +44,43 @@ func addBookHandlerFn(s service.IBookService) gin.HandlerFunc {
 		}
 	}
 }
+
+// updateBookHandlerFn update book
+func updateBookHandlerFn(s service.IBookService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		isbn := c.Param("isbn")
+		body := make(gin.H)
+		if err := c.BindJSON(&body); err != nil {
+			_ = c.Error(err)
+			return
+		}
+
+		if book, err := s.UpdateBook(isbn, body); err != nil {
+			_ = c.Error(err)
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"data": book,
+			})
+		}
+	}
+}
+
+// updateOwnedBookHandlerFn update book
+func updateOwnedBookHandlerFn(s service.IBookService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		isbn := c.Param("isbn")
+		body := make(gin.H)
+		if err := c.BindJSON(&body); err != nil {
+			_ = c.Error(err)
+			return
+		}
+
+		if book, err := s.UpdateOwnedBook(isbn, body); err != nil {
+			_ = c.Error(err)
+		} else {
+			c.JSON(http.StatusOK, gin.H{
+				"data": book,
+			})
+		}
+	}
+}

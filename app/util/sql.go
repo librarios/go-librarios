@@ -29,6 +29,15 @@ func NullStringJoin(arr []string, separator string) null.String {
 	}
 }
 
+func StringPtrJoin(arr []string, separator string) *string {
+	if len(arr) == 0 {
+		return nil
+	} else {
+		result := strings.Join(arr, separator)
+		return &result
+	}
+}
+
 func NullFloat(f float64) null.Float {
 	return null.NewFloat(f, f != 0)
 }

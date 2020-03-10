@@ -4,6 +4,6 @@ plugins:
     apiKey: af0cd46c81f8f1a1880adcb051a835b5
 db:
   dialect: sqlite3
-  filename: ":memory:"
+  filename: "file::memory:?mode=memory&cache=shared"
   autoMigrate: true
   showSql: true
