@@ -20,7 +20,7 @@ func InitEndpoints(
 
 func addEndpoints(r *gin.Engine, bookService service.IBookService) {
 	r.GET("/book/search", searchBookHandlerFn(bookService))
-	r.POST("/book", addBookHandlerFn(bookService))
-	r.PATCH("/book/:isbn", updateBookHandlerFn(bookService))
-	r.PATCH("/book/:isbn/owned", updateOwnedBookHandlerFn(bookService))
+	r.POST("/books", addBookHandlerFn(bookService))
+	r.PATCH("/books/:isbn", updateBookHandlerFn(bookService))
+	r.PATCH("/books/:isbn/owned", updateOwnedBookHandlerFn(bookService))
 }
