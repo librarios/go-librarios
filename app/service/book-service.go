@@ -263,4 +263,3 @@ func DeleteAllBooks() error {
 func DeleteAllOwnedBooks() error {
 	return dbConn.Unscoped().Delete(model.OwnedBook{}).Error
 }
-
