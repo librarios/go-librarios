@@ -3,6 +3,7 @@ module github.com/librarios/go-librarios
 go 1.13
 
 require (
+	github.com/gin-contrib/cache v1.1.0
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.5.0
 	github.com/go-playground/universal-translator v0.17.0 // indirect
