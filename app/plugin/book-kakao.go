@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -32,7 +33,7 @@ func (k *Kakao) SetProperties(p map[string]interface{}) {
 }
 
 func (k *Kakao) searhBook(target string, query string) ([]*Book, error) {
-	u := fmt.Sprintf("https://dapi.kakao.com/v3/search/book?target=%s&query=%s", target, query)
+	u := fmt.Sprintf("https://dapi.kakao.com/v3/search/book?target=%s&query=%s", target, url.QueryEscape(query))
 	log.Printf("[GET] %s", u)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
