@@ -19,6 +19,7 @@ type AddBookCommand struct {
 	PaidPrice    float64
 	ActualPages  int64
 	HasPaperBook bool
+	Detail       *plugin.Book
 }
 
 type UpdateBookCommand struct {
@@ -123,15 +124,21 @@ func (s *BookService) AddBook(cmd AddBookCommand) (*model.Book, error) {
 				return err
 			}
 
-			// search book info
-			books, err := s.Search(cmd.ISBN, "", "", "")
-			if err != nil {
-				return err
+			book := cmd.Detail
+			if book == nil {
+				// search book info
+				books, err := s.Search(cmd.ISBN, "", "", "")
+				if err != nil {
+					return err
+				}
+
+				if len(books) > 0 {
+					book = books[0]
+				}
 			}
 
 			// insert book
-			if len(books) > 0 {
-				book := books[0]
+			if book != nil {
 				bookModel.ISBN13 = book.ISBN13
 				bookModel.ISBN10 = null.StringFrom(book.ISBN10)
 				bookModel.Title = book.Title

@@ -3,6 +3,7 @@ package controller
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/gin"
 	"github.com/librarios/go-librarios/app/config"
 	"github.com/librarios/go-librarios/app/plugin"
@@ -14,6 +15,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 )
 
 type TestServer struct {
@@ -24,8 +26,8 @@ type TestServer struct {
 func (t *TestServer) Init() {
 	t.r = gin.New()
 	t.bookService = service.NewBookService()
-
-	addEndpoints(t.r, t.bookService)
+	cacheStore := persistence.NewInMemoryStore(time.Second)
+	addEndpoints(t.r, cacheStore, t.bookService)
 }
 
 func (t *TestServer) Get(url string, result interface{}) *httptest.ResponseRecorder {
