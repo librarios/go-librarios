@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+// InitEndpoints initializes gin-gonic router engine and registers http endpoints.
 func InitEndpoints(
 	port int,
 	bookService service.IBookService,
@@ -26,17 +27,19 @@ func InitEndpoints(
 	}
 }
 
+// setCORS accepts all requests from any source.
 func setCORS(r *gin.Engine) {
 	r.Use(cors.Default())
 }
 
+// addEntpoints registers http endpoints.
 func addEndpoints(
 	r *gin.Engine,
 	cacheStore persistence.CacheStore,
 	bookService service.IBookService,
 ) {
-	r.GET("/book/search", cache.CachePage(cacheStore, 5*time.Minute, searchBookHandlerFn(bookService)))
-	r.POST("/books", addBookHandlerFn(bookService))
-	r.PATCH("/books/:isbn", updateBookHandlerFn(bookService))
-	r.PATCH("/books/:isbn/owned", updateOwnedBookHandlerFn(bookService))
+	r.GET("/book/search", cache.CachePage(cacheStore, 5*time.Minute, SearchBookHandlerFn(bookService)))
+	r.POST("/books", AddBookHandlerFn(bookService))
+	r.PATCH("/books/:isbn", UpdateBookHandlerFn(bookService))
+	r.PATCH("/books/:isbn/owned", UpdateOwnedBookHandlerFn(bookService))
 }

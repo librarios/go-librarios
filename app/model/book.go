@@ -1,33 +1,45 @@
 package model
 
 import (
-	"gopkg.in/guregu/null.v3"
+	"github.com/jinzhu/gorm"
 )
 
-type Book struct {
-	BaseModel
-	ISBN13        string      `gorm:"size:13;unique" json:"isbn13,omitempty"`
-	ISBN10        null.String `gorm:"size:10" json:"isbn10,omitempty"`
-	Title         string      `gorm:"size:255" json:"title,omitempty"`
-	OriginalISBN  null.String `gorm:"size:13" json:"originalISBN,omitempty"`
-	OriginalTitle null.String `gorm:"size:255" json:"originalTitle,omitempty"`
-	Contents      null.String `gorm:"size:8192" json:"contents,omitempty"`
-	Url           null.String `gorm:"size:1024" json:"url,omitempty"`
-	PubDate       null.Time   `json:"pubDate,omitempty"`
-	Authors       null.String `gorm:"size:255" json:"authors,omitempty"`
-	Translators   null.String `gorm:"size:255" json:"translators,omitempty"`
-	Publisher     null.String `gorm:"size:255" json:"publisher,omitempty"`
-	Price         null.Float  `json:"price,omitempty"`
-	Currency      null.String `json:"currency,omitempty"`
+// FindBookByISBN finds a book with matching ISBN.
+// returns (nil, nil) if not found.
+func FindBookByISBN(isbn string) (*Book, error) {
+	book := new(Book)
+	book.ISBN13 = isbn
+
+	if err := DB(nil).Where(book).First(book).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return book, nil
 }
 
-type OwnedBook struct {
-	BaseModel
-	ISBN         string      `gorm:"size:13;unique" json:"ISBN13"`
-	Owner        null.String `gorm:"size:255" json:"owner"`
-	AcquiredAt   null.Time   `json:"acquiredAt"`
-	ScannedAt    null.Time   `json:"scannedAt"`
-	PaidPrice    null.Float  `json:"paidPrice"`
-	ActualPages  null.Int    `json:"actualPages"`
-	HasPaperBook bool        `json:"hasPaperBook"`
+// FindOwnedBookByISBN finds an owned book with matching ISBN.
+// returns (nil, nil) if not found.
+func FindOwnedBookByISBN(isbn string) (*OwnedBook, error) {
+	book := new(OwnedBook)
+	book.ISBN = isbn
+
+	if err := DB(nil).Where(book).First(book).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return book, nil
+}
+
+// DeleteAllBooks deletes all books.
+func DeleteAllBooks(tx *gorm.DB) error {
+	return DB(tx).Unscoped().Delete(Book{}).Error
+}
+
+// DeleteAllOwnBooks deletes all owned books.
+func DeleteAllOwnedBooks(tx *gorm.DB, ) error {
+	return DB(tx).Unscoped().Delete(OwnedBook{}).Error
 }

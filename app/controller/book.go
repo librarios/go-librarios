@@ -5,8 +5,8 @@ import (
 	"github.com/librarios/go-librarios/app/service"
 )
 
-// searchBookHandlerFn returns HandlerFunc that searches book
-func searchBookHandlerFn(s service.IBookService) gin.HandlerFunc {
+// SearchBookHandlerFn returns HandlerFunc that searches book
+func SearchBookHandlerFn(s service.IBookService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		isbn := c.Query("isbn")
 		publisher := c.Query("publisher")

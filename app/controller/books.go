@@ -6,8 +6,8 @@ import (
 	"net/http"
 )
 
-// addBookHandlerFn add book
-func addBookHandlerFn(s service.IBookService) gin.HandlerFunc {
+// AddBookHandlerFn add book
+func AddBookHandlerFn(s service.IBookService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var body service.AddBookCommand
 		if err := c.BindJSON(&body); err != nil {
@@ -25,8 +25,8 @@ func addBookHandlerFn(s service.IBookService) gin.HandlerFunc {
 	}
 }
 
-// updateBookHandlerFn update book
-func updateBookHandlerFn(s service.IBookService) gin.HandlerFunc {
+// UpdateBookHandlerFn update book
+func UpdateBookHandlerFn(s service.IBookService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		isbn := c.Param("isbn")
 		body := make(gin.H)
@@ -45,8 +45,8 @@ func updateBookHandlerFn(s service.IBookService) gin.HandlerFunc {
 	}
 }
 
-// updateOwnedBookHandlerFn update book
-func updateOwnedBookHandlerFn(s service.IBookService) gin.HandlerFunc {
+// UpdateOwnedBookHandlerFn update book
+func UpdateOwnedBookHandlerFn(s service.IBookService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		isbn := c.Param("isbn")
 		body := make(gin.H)

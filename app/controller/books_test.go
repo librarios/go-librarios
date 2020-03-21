@@ -11,10 +11,10 @@ import (
 )
 
 func deleteAllBooks() {
-	_ = service.DeleteAllBooks()
+	_ = model.DeleteAllBooks(nil)
 }
 func deleteAllOwnedBooks() {
-	_ = service.DeleteAllOwnedBooks()
+	_ = model.DeleteAllOwnedBooks(nil)
 }
 
 func TestAddBookIntegration(t *testing.T) {
@@ -46,7 +46,7 @@ func TestUpdateBookSpec(t *testing.T) {
 	deleteAllBooks()
 
 	isbn := "9788960778320"
-	_, _ = service.InsertBook(&model.Book{ISBN13: isbn})
+	_ = model.Save(nil, &model.Book{ISBN13: isbn}, true)
 
 	Convey("updateBook", t, func() {
 		body := gin.H{
@@ -70,9 +70,7 @@ func TestUpdateOwnedBookSpec(t *testing.T) {
 	deleteAllOwnedBooks()
 
 	isbn := "9788960778320"
-	_, _ = service.InsertOwnedBook(&model.OwnedBook{
-		ISBN: isbn,
-	})
+	_ = model.Save(nil, &model.OwnedBook{ISBN: isbn}, true)
 
 	Convey("updateOwnedBook", t, func() {
 		body := gin.H{

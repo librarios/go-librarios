@@ -6,6 +6,7 @@ import (
 	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/gin"
 	"github.com/librarios/go-librarios/app/config"
+	"github.com/librarios/go-librarios/app/model"
 	"github.com/librarios/go-librarios/app/plugin"
 	"github.com/librarios/go-librarios/app/service"
 	"io"
@@ -18,30 +19,47 @@ import (
 	"time"
 )
 
+// TestServer is a gin-gonic server for testing
 type TestServer struct {
 	r           *gin.Engine
 	bookService service.IBookService
 }
 
+// Init initializes gin-gonic server
 func (t *TestServer) Init() {
-	t.r = gin.New()
-	t.bookService = service.NewBookService()
+	r := gin.New()
+	r = gin.New()
+	bookService := service.NewBookService()
+
 	cacheStore := persistence.NewInMemoryStore(time.Second)
-	addEndpoints(t.r, cacheStore, t.bookService)
+	addEndpoints(r, cacheStore, bookService)
+
+	t.r = r
+	t.bookService = bookService
 }
 
+// Get sends GET http request to testServer
 func (t *TestServer) Get(url string, result interface{}) *httptest.ResponseRecorder {
 	return t.request(http.MethodGet, url, result)
 }
 
+// Get sends PATCH http request to testServer
 func (t *TestServer) Patch(url string, body interface{}, result interface{}) *httptest.ResponseRecorder {
 	return t.requestJSON(http.MethodPatch, url, body, result)
 }
 
+// Get sends Post http request to testServer
 func (t *TestServer) Post(url string, body interface{}, result interface{}) *httptest.ResponseRecorder {
 	return t.requestJSON(http.MethodPost, url, body, result)
 }
 
+// Get sends Put http request to testServer
+func (t *TestServer) Put(url string, body interface{}, result interface{}) *httptest.ResponseRecorder {
+	return t.requestJSON(http.MethodPut, url, body, result)
+}
+
+// requestJSON sends http request with JSON body and return response.
+// JSON type response contents are parsed into result variable.
 func (t *TestServer) requestJSON(
 	method string,
 	url string,
@@ -78,6 +96,8 @@ func (t *TestServer) requestJSON(
 	return rw
 }
 
+// request sends http request and return response.
+// JSON type response contents are parsed into result variable.
 func (t *TestServer) request(
 	method string,
 	url string,
@@ -99,7 +119,7 @@ func (t *TestServer) request(
 
 var testServer *TestServer
 
-// TestMain is test entryPoint
+// TestMain is a test entryPoint
 func TestMain(m *testing.M) {
 	setup()
 	retCode := m.Run()
@@ -119,8 +139,11 @@ func setup() {
 	plugin.InitPlugins(c.Plugins)
 
 	// connect to DB
-	if err = service.InitDB(c.DB); err != nil {
+	if err = config.InitDB(c.DB); err != nil {
 		log.Panicf("failed to connect DB. err: %v", err)
+	}
+	if c.DB["autoMigrate"] == true {
+		model.AutoMigrate()
 	}
 
 	testServer = &TestServer{}
@@ -128,4 +151,5 @@ func setup() {
 }
 
 func teardown() {
+	config.CloseDB()
 }

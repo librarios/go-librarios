@@ -1,4 +1,4 @@
-package service
+package config
 
 import (
 	"errors"
@@ -6,25 +6,16 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/librarios/go-librarios/app/model"
 	"log"
 )
 
-var dbConn *gorm.DB
+var DB *gorm.DB
 
+// InitDB initializes DB connection
 func InitDB(props map[string]interface{}) error {
-	conn, err := ConnectDB(props)
-	if err != nil {
-		return err
-	}
-	dbConn = conn
-	return nil
-}
-
-func ConnectDB(props map[string]interface{}) (*gorm.DB, error) {
 	dialect, ok := props["dialect"]
 	if !ok {
-		return nil, errors.New("DB dialect is not set")
+		return errors.New("DB dialect is not set")
 	}
 
 	strDialect := dialect.(string)
@@ -49,11 +40,11 @@ func ConnectDB(props map[string]interface{}) (*gorm.DB, error) {
 		)
 
 	default:
-		return nil, errors.New(fmt.Sprintf("unsupported dialect: %s", dialect))
+		return errors.New(fmt.Sprintf("unsupported dialect: %s", dialect))
 	}
 
 	if err != nil {
-		return db, err
+		return err
 	}
 
 	// log mode
@@ -61,14 +52,20 @@ func ConnectDB(props map[string]interface{}) (*gorm.DB, error) {
 		db.LogMode(true)
 	}
 
-	// auto-migrate
-	if props["autoMigrate"] == true {
-		autoMigrateDB(db)
-	}
+	// set global DB connection
+	DB = db
 
-	return db, err
+	return nil
 }
 
+// CloseDB closes DB connection
+func CloseDB() {
+	if DB != nil {
+		_ = DB.Close()
+	}
+}
+
+// connectSqlite3 connects to sqlite3 database
 func connectSqlite3(filename string) (*gorm.DB, error) {
 	db, err := gorm.Open("sqlite3", filename)
 	if err != nil {
@@ -79,6 +76,7 @@ func connectSqlite3(filename string) (*gorm.DB, error) {
 	return db, nil
 }
 
+// connectMysql connects to mysql/mariaDB database
 func connectMysql(host, database, username, password string, port int) (*gorm.DB, error) {
 	args := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&serverTimezone=UTC&parseTime=True",
 		username,
@@ -98,12 +96,4 @@ func connectMysql(host, database, username, password string, port int) (*gorm.DB
 	log.Printf("connected to mysql: %s@%s:%d/%s", username, host, port, database)
 
 	return db, nil
-}
-
-func autoMigrateDB(db *gorm.DB) {
-	db.AutoMigrate(
-		&model.Book{},
-		&model.OwnedBook{},
-	)
-	log.Println("DB auto migration finished.")
 }
