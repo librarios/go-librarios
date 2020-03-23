@@ -1,0 +1,200 @@
+{
+  "version": "0.0.1",
+  "tables": [
+    {
+      "name": "books",
+      "columns": [
+        {
+          "name": "id",
+          "type": "long",
+          "desc": "unique id",
+          "pk": true,
+          "autoinc": true
+        },
+        {
+          "name": "isbn13",
+          "type": "string",
+          "desc": "ISBN13",
+          "size": 13,
+          "unique": true
+        },
+        {
+          "name": "isbn10",
+          "type": "string",
+          "desc": "ISBN10",
+          "size": 10,
+          "nullable": true
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "desc": "Title",
+          "size": 255
+        },
+        {
+          "name": "original_isbn",
+          "type": "string",
+          "desc": "ISBN of original book",
+          "size": 13,
+          "nullable": true
+        },
+        {
+          "name": "original_title",
+          "type": "string",
+          "desc": "Title of original book",
+          "size": 255,
+          "nullable": true
+        },
+        {
+          "name": "contents",
+          "type": "string",
+          "desc": "book contents summary",
+          "size": 8192,
+          "nullable": true
+        },
+        {
+          "name": "url",
+          "type": "string",
+          "desc": "book description url",
+          "size": 1024,
+          "nullable": true
+        },
+        {
+          "name": "pub_date",
+          "type": "datetime",
+          "desc": "published date",
+          "nullable": true
+        },
+        {
+          "name": "authors",
+          "type": "string",
+          "desc": "authors. Delimiter: ','",
+          "size": 255,
+          "nullable": true
+        },
+        {
+          "name": "translators",
+          "type": "string",
+          "desc": "Translators. Delimiter: ','",
+          "size": 255,
+          "nullable": true
+        },
+        {
+          "name": "publisher",
+          "type": "string",
+          "desc": "Publisher",
+          "size": 255,
+          "nullable": true
+        },
+        {
+          "name": "price",
+          "type": "decimal",
+          "desc": "Price",
+          "size": 20,
+          "scale": 2,
+          "nullable": true
+        },
+        {
+          "name": "currency",
+          "type": "string",
+          "desc": "Price currency",
+          "size": 3,
+          "nullable": true
+        },
+        {
+          "name": "created_at",
+          "type": "datetime",
+          "desc": "Created at"
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime",
+          "desc": "Updated at"
+        },
+        {
+          "name": "deleted_at",
+          "type": "datetime",
+          "desc": "Deleted at",
+          "nullable": true
+        }
+      ],
+      "desc": "books",
+      "group": "Common"
+    },
+    {
+      "name": "owned_books",
+      "columns": [
+        {
+          "name": "id",
+          "type": "long",
+          "desc": "unique id",
+          "pk": true,
+          "autoinc": true
+        },
+        {
+          "name": "isbn",
+          "type": "string",
+          "desc": "ISBN",
+          "size": 13,
+          "unique": true
+        },
+        {
+          "name": "owner",
+          "type": "string",
+          "desc": "group ID",
+          "size": 255,
+          "nullable": true
+        },
+        {
+          "name": "acquired_at",
+          "type": "date",
+          "desc": "Date of book acquisition",
+          "nullable": true
+        },
+        {
+          "name": "scanned_at",
+          "type": "date",
+          "desc": "Date of book scanned",
+          "nullable": true
+        },
+        {
+          "name": "paid_price",
+          "type": "decimal",
+          "desc": "Actual price to buy the book",
+          "size": 20,
+          "scale": 2,
+          "nullable": true
+        },
+        {
+          "name": "actual_pages",
+          "type": "int",
+          "desc": "Actual pages of scanned book",
+          "nullable": true
+        },
+        {
+          "name": "has_paperback",
+          "type": "boolean",
+          "desc": "true: paper book, false: ebook"
+        },
+        {
+          "name": "created_at",
+          "type": "datetime",
+          "desc": "Created at"
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime",
+          "desc": "Updated at"
+        },
+        {
+          "name": "deleted_at",
+          "type": "datetime",
+          "desc": "Deleted at",
+          "nullable": true
+        }
+      ],
+      "desc": "user owned books",
+      "group": "Common"
+    }
+  ]
+}
