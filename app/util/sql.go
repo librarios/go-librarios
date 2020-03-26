@@ -1,6 +1,7 @@
 package util
 
 import (
+	"github.com/shopspring/decimal"
 	"gopkg.in/guregu/null.v3"
 	"strings"
 )
@@ -44,4 +45,11 @@ func NullFloat(f float64) null.Float {
 
 func NullInt(i int64) null.Int {
 	return null.NewInt(i, i != 0)
+}
+
+func NullDecimal(d decimal.Decimal) decimal.NullDecimal {
+	return decimal.NullDecimal{
+		Decimal: d,
+		Valid: true,
+	}
 }

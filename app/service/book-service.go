@@ -9,6 +9,7 @@ import (
 	"github.com/librarios/go-librarios/app/model"
 	"github.com/librarios/go-librarios/app/plugin"
 	"github.com/librarios/go-librarios/app/util"
+	"github.com/shopspring/decimal"
 	"gopkg.in/guregu/null.v3"
 )
 
@@ -17,7 +18,7 @@ type AddBookCommand struct {
 	Owner        string
 	AcquiredAt   string
 	ScannedAt    string
-	PaidPrice    float64
+	PaidPrice    decimal.NullDecimal
 	ActualPages  int64
 	HasPaperBook bool
 	Detail       *plugin.Book
@@ -150,7 +151,7 @@ func (s *BookService) AddBook(cmd AddBookCommand) (*model.Book, error) {
 				book.Authors = util.NullStringJoin(pBook.Authors, ",")
 				book.Translators = util.NullStringJoin(pBook.Translators, ",")
 				book.Publisher = util.NullString(pBook.Publisher)
-				book.Price = util.NullFloat(pBook.Price)
+				book.Price = util.NullDecimal(pBook.Price)
 				book.Currency = util.NullString(pBook.Currency)
 			} else {
 				if len(cmd.ISBN) == 13 {
@@ -181,7 +182,7 @@ func (s *BookService) AddBook(cmd AddBookCommand) (*model.Book, error) {
 		ownedBook.Owner = util.NullString(cmd.Owner)
 		ownedBook.AcquiredAt = util.NullTimeFromString(cmd.AcquiredAt)
 		ownedBook.ScannedAt = util.NullTimeFromString(cmd.ScannedAt)
-		ownedBook.PaidPrice = util.NullFloat(cmd.PaidPrice)
+		ownedBook.PaidPrice = cmd.PaidPrice
 		ownedBook.ActualPages = util.NullInt(cmd.ActualPages)
 		ownedBook.HasPaperBook = cmd.HasPaperBook
 

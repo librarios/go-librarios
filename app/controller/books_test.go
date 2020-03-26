@@ -86,7 +86,7 @@ func TestUpdateOwnedBookSpec(t *testing.T) {
 		book := result.Data
 		So(rw.Code, ShouldEqual, http.StatusOK)
 		So(book.Owner.String, ShouldEqual, body["owner"])
-		So(book.PaidPrice.Float64, ShouldEqual, body["paidPrice"])
+		So(book.PaidPrice.Decimal.IntPart(), ShouldEqual, body["paidPrice"])
 		So(book.HasPaperBook, ShouldEqual, body["hasPaperBook"])
 	})
 }

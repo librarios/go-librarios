@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/librarios/go-librarios/app/util"
+	"github.com/shopspring/decimal"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -87,7 +88,7 @@ func (k *Kakao) toBook(doc KakaoDocument) *Book {
 	book.Authors = doc.Authors
 	book.Publisher = doc.Publisher
 	book.Translators = doc.Translators
-	book.Price = float64(doc.Price)
+	book.Price = decimal.NewFromInt32(doc.Price)
 	book.Currency = "KRW"
 
 	return book
@@ -112,9 +113,9 @@ func (k *Kakao) FindByPerson(person string) ([]*Book, error) {
 // Kakao API definitions
 
 type KakaoMeta struct {
-	IsEnd         bool `json:"is_end"`
-	PageableCount int  `json:"pageable_count"`
-	TotalCount    int  `json:"total_count"`
+	IsEnd         bool  `json:"is_end"`
+	PageableCount int32 `json:"pageable_count"`
+	TotalCount    int32 `json:"total_count"`
 }
 
 type KakaoDocument struct {
@@ -126,8 +127,8 @@ type KakaoDocument struct {
 	Authors     []string `json:"authors"`
 	Publisher   string   `json:"publisher"`
 	Translators []string `json:"translators"`
-	Price       int      `json:"price"`
-	SalePrice   int      `json:"sale_price"`
+	Price       int32    `json:"price"`
+	SalePrice   int32    `json:"sale_price"`
 	Thumbnail   string   `json:"thumbnail"`
 	Status      string   `json:"status"`
 }

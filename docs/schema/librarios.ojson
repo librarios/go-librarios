@@ -122,6 +122,50 @@
       "group": "Common"
     },
     {
+      "name": "interest_books",
+      "columns": [
+        {
+          "name": "id",
+          "type": "long",
+          "desc": "unique id",
+          "pk": true,
+          "autoinc": true
+        },
+        {
+          "name": "login_id",
+          "type": "string",
+          "desc": "login ID",
+          "size": 40,
+          "unique": true
+        },
+        {
+          "name": "isbn",
+          "type": "string",
+          "desc": "ISBN",
+          "size": 13,
+          "unique": true
+        },
+        {
+          "name": "created_at",
+          "type": "datetime",
+          "desc": "Created at"
+        },
+        {
+          "name": "updated_at",
+          "type": "datetime",
+          "desc": "Updated at"
+        },
+        {
+          "name": "deleted_at",
+          "type": "datetime",
+          "desc": "Deleted at",
+          "nullable": true
+        }
+      ],
+      "desc": "interested books by user",
+      "group": "Common"
+    },
+    {
       "name": "owned_books",
       "columns": [
         {
@@ -136,6 +180,13 @@
           "type": "string",
           "desc": "ISBN",
           "size": 13,
+          "unique": true
+        },
+        {
+          "name": "login_id",
+          "type": "string",
+          "desc": "login ID",
+          "size": 40,
           "unique": true
         },
         {
