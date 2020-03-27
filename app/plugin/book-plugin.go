@@ -19,6 +19,7 @@ type Book struct {
 	Publisher     string          `json:"publisher,omitempty"`
 	Price         decimal.Decimal `json:"price,omitempty"`
 	Currency      string          `json:"currency,omitempty"`
+	Thumbnail     string          `json:"thumbnail,omitempty"`
 }
 
 type BookPlugin interface {

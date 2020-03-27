@@ -153,6 +153,7 @@ func (s *BookService) AddBook(cmd AddBookCommand) (*model.Book, error) {
 				book.Publisher = util.NullString(pBook.Publisher)
 				book.Price = util.NullDecimal(pBook.Price)
 				book.Currency = util.NullString(pBook.Currency)
+				book.Thumbnail = util.NullString(pBook.Thumbnail)
 			} else {
 				if len(cmd.ISBN) == 13 {
 					book.ISBN13 = cmd.ISBN

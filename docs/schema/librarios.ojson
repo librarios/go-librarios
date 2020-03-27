@@ -102,6 +102,12 @@
           "nullable": true
         },
         {
+          "name": "thumbnail",
+          "type": "text",
+          "desc": "book cover thumbnail",
+          "nullable": true
+        },
+        {
           "name": "created_at",
           "type": "datetime",
           "desc": "Created at"

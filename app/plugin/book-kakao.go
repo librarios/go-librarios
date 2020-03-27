@@ -90,6 +90,7 @@ func (k *Kakao) toBook(doc KakaoDocument) *Book {
 	book.Translators = doc.Translators
 	book.Price = decimal.NewFromInt32(doc.Price)
 	book.Currency = "KRW"
+	book.Thumbnail = doc.Thumbnail
 
 	return book
 }

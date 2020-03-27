@@ -7,10 +7,10 @@ import (
 )
 
 type BaseModel struct {
-	ID        uint       `gorm:"primary_key" json:"id"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
-	DeletedAt *time.Time `sql:"index" json:"deleted_at,omitempty"`
+	ID        uint      `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt null.Time `sql:"index" json:"deleted_at,omitempty"`
 }
 
 type Book struct {
@@ -28,6 +28,7 @@ type Book struct {
 	Publisher     null.String         `gorm:"size:255" json:"publisher,omitempty"`
 	Price         decimal.NullDecimal `gorm:"type:decimal(20,2)" json:"price,omitempty"`
 	Currency      null.String         `json:"currency,omitempty"`
+	Thumbnail     null.String         `json:"thumbnail,omitempty"`
 }
 
 func (b *Book) TableName() string {
