@@ -6,7 +6,6 @@ import (
 	"github.com/librarios/go-librarios/app/controller"
 	"github.com/librarios/go-librarios/app/model"
 	"github.com/librarios/go-librarios/app/plugin"
-	"github.com/librarios/go-librarios/app/service"
 	"log"
 	"os"
 )
@@ -39,9 +38,6 @@ func StartServer(configFilename string) {
 	}
 	gin.SetMode(ginMode)
 
-	// services
-	bookService := service.NewBookService()
-
 	// router
-	controller.InitEndpoints(c.Port, bookService)
+	controller.InitEndpoints(c.Port)
 }

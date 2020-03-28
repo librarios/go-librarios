@@ -44,25 +44,28 @@ func TestUpdateBookSpec(t *testing.T) {
 	deleteAllBooks()
 
 	isbn := "9788960778320"
-	_ = model.Save(nil, &model.Book{Isbn13: isbn}, true)
+	book := model.Book{Isbn13: isbn}
+	_ = model.Save(nil, &book, true)
 
 	Convey("updateBook", t, func() {
 		body := gin.H{
-			"title":   "foo",
-			"authors": "tom,james",
-			"dummy":   "foo,bar",
-			"price": 100,
+			"title":    "foo",
+			"authors":  "tom,james",
+			"dummy":    "foo,bar",
+			"price":    100,
+			"currency": "USD",
 		}
 		var result struct {
 			Data *model.Book
 		}
-		rw := testServer.Patch(fmt.Sprintf("/books/book/%s", isbn), body, &result)
+		rw := testServer.Patch(fmt.Sprintf("/books/book/%d", book.ID), body, &result)
 
-		book := result.Data
+		res := result.Data
 		So(rw.Code, ShouldEqual, http.StatusOK)
-		So(book.Title, ShouldEqual, body["title"])
-		So(book.Authors.String, ShouldEqual, body["authors"])
-		So(book.Price.Decimal.IntPart(), ShouldEqual, body["price"])
+		So(res.Title, ShouldEqual, body["title"])
+		So(res.Authors.String, ShouldEqual, body["authors"])
+		So(res.Price.Decimal.IntPart(), ShouldEqual, body["price"])
+		So(res.Currency.String, ShouldEqual, body["currency"])
 	})
 }
 
@@ -70,23 +73,28 @@ func TestUpdateOwnedBookSpec(t *testing.T) {
 	deleteAllOwnedBooks()
 
 	isbn := "9788960778320"
-	_ = model.Save(nil, &model.OwnedBook{Isbn: isbn}, true)
+	ownedBook := model.OwnedBook{Isbn: isbn}
+	_ = model.Save(nil, &ownedBook, true)
 
 	Convey("updateOwnedBook", t, func() {
 		body := gin.H{
 			"owner":        "foo",
+			"acquiredAt":   "2020-01-02",
+			"scannedAt":    "2020-01-03",
 			"paidPrice":    25000,
 			"hasPaperBook": true,
 		}
 		var result struct {
 			Data *model.OwnedBook
 		}
-		rw := testServer.Patch(fmt.Sprintf("/books/own/%s", isbn), body, &result)
+		rw := testServer.Patch(fmt.Sprintf("/books/own/%d", ownedBook.ID), body, &result)
 
-		book := result.Data
+		res := result.Data
 		So(rw.Code, ShouldEqual, http.StatusOK)
-		So(book.Owner.String, ShouldEqual, body["owner"])
-		So(book.PaidPrice.Decimal.IntPart(), ShouldEqual, body["paidPrice"])
-		So(book.HasPaperBook, ShouldEqual, body["hasPaperBook"])
+		So(res.Owner.String, ShouldEqual, body["owner"])
+		So(res.AcquiredAt.String, ShouldEqual, body["acquiredAt"])
+		So(res.ScannedAt.String, ShouldEqual, body["scannedAt"])
+		So(res.PaidPrice.Decimal.IntPart(), ShouldEqual, body["paidPrice"])
+		So(res.HasPaperBook, ShouldEqual, body["hasPaperBook"])
 	})
 }

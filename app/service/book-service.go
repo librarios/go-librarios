@@ -3,43 +3,19 @@ package service
 import (
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/librarios/go-librarios/app/config"
 	"github.com/librarios/go-librarios/app/model"
 	"github.com/librarios/go-librarios/app/plugin"
 	"github.com/librarios/go-librarios/app/util"
-	"github.com/shopspring/decimal"
 	"gopkg.in/guregu/null.v3"
+	"log"
 )
 
 type AddOwnedBook struct {
 	Isbn     string
 	Searched *model.Book
-}
-
-type UpdateOwnedBook struct {
-	Isbn         string
-	Owner        string
-	AcquiredAt   string
-	ScannedAt    string
-	PaidPrice    decimal.NullDecimal
-	ActualPages  int64
-	HasPaperBook bool
-}
-
-type UpdateBook struct {
-	Isbn          string
-	Title         string
-	OriginalIsbn  null.String
-	OriginalTitle null.String
-	Contents      null.String
-	Url           null.String
-	PubDate       null.Time
-	Authors       null.String
-	Translators   null.String
-	Publisher     null.String
-	Price         decimal.NullDecimal
-	Currency      null.String
 }
 
 // convertBook converts plugin.Book to model.Book
@@ -56,7 +32,7 @@ func convertBook(pBook *plugin.Book) *model.Book {
 		OriginalTitle: util.NullString(pBook.OriginalTitle),
 		Contents:      util.NullString(pBook.Contents),
 		Url:           util.NullString(pBook.Url),
-		PubDate:       pBook.PubDate,
+		PubDate:       util.NullString(pBook.PubDate),
 		Authors:       util.NullStringJoin(pBook.Authors, ","),
 		Translators:   util.NullStringJoin(pBook.Translators, ","),
 		Publisher:     util.NullString(pBook.Publisher),
@@ -74,11 +50,11 @@ type IBookService interface {
 	) ([]*model.Book, error)
 
 	AddOwnedBook(book AddOwnedBook) (*model.OwnedBook, error)
-	UpdateOwnedBook(isbn string, update UpdateOwnedBook) (*model.OwnedBook, error)
-	UpdateBook(isbn string, update UpdateBook) (*model.Book, error)
+	UpdateOwnedBook(id uint, update gin.H) (*model.OwnedBook, error)
+	UpdateBook(id uint, update gin.H) (*model.Book, error)
 }
 
-type BookService struct {
+type BookServiceImpl struct {
 	bookPlugins []plugin.BookPlugin
 }
 
@@ -89,13 +65,13 @@ func NewBookService() IBookService {
 		bookPlugins = append(bookPlugins, bookPlugin)
 	}
 
-	return &BookService{
+	return &BookServiceImpl{
 		bookPlugins: bookPlugins,
 	}
 }
 
 // Search book information using bookPlugin
-func (s *BookService) Search(isbn string,
+func (s *BookServiceImpl) Search(isbn string,
 	publisher string,
 	person string,
 	title string,
@@ -140,7 +116,7 @@ func (s *BookService) Search(isbn string,
 	return books, nil
 }
 
-func (s *BookService) searchByIsbn(isbn string) (*model.Book, error) {
+func (s *BookServiceImpl) searchByIsbn(isbn string) (*model.Book, error) {
 	if books, err := s.Search(isbn, "", "", ""); err != nil {
 		return nil, err
 	} else {
@@ -153,7 +129,7 @@ func (s *BookService) searchByIsbn(isbn string) (*model.Book, error) {
 }
 
 // AddOwnedBook adds/updates book and ownedBook.
-func (s *BookService) AddOwnedBook(body AddOwnedBook) (*model.OwnedBook, error) {
+func (s *BookServiceImpl) AddOwnedBook(body AddOwnedBook) (*model.OwnedBook, error) {
 	var ownedBook *model.OwnedBook
 	var err error
 
@@ -198,7 +174,7 @@ func (s *BookService) AddOwnedBook(body AddOwnedBook) (*model.OwnedBook, error) 
 }
 
 // addBook inserts model.Book to DB.
-func (s *BookService) addBook(tx *gorm.DB, book *model.Book) (*model.Book, error) {
+func (s *BookServiceImpl) addBook(tx *gorm.DB, book *model.Book) (*model.Book, error) {
 	if err := model.Save(tx, book, true); err != nil {
 		return nil, err
 	} else {
@@ -206,32 +182,32 @@ func (s *BookService) addBook(tx *gorm.DB, book *model.Book) (*model.Book, error
 	}
 }
 
-func (s *BookService) UpdateBook(isbn string, update UpdateBook) (*model.Book, error) {
-	var err error
-	book, err := model.FindBookByIsbn(isbn)
-
-	if err != nil {
+// UpdateBook updates Book.
+func (s *BookServiceImpl) UpdateBook(id uint, update gin.H) (*model.Book, error) {
+	if book, err := model.FindBook(id); err != nil {
 		return nil, err
+	} else if book == nil {
+		return nil, fmt.Errorf("book not found. id=%d", id)
+	} else {
+		if err := config.DB.Model(book).Updates(update).Error; err != nil {
+			return nil, err
+		}
+		return book, nil
 	}
-
-	if err := config.DB.Model(book).Updates(update).Error; err != nil {
-		return nil, err
-	}
-
-	return book, nil
 }
 
-func (s *BookService) UpdateOwnedBook(isbn string, update UpdateOwnedBook) (*model.OwnedBook, error) {
-	var err error
-	book, err := model.FindOwnedBookByIsbn(isbn)
-
-	if err != nil {
+// UpdateOwnedBook updates OwnedBook.
+func (s *BookServiceImpl) UpdateOwnedBook(id uint, update gin.H) (*model.OwnedBook, error) {
+	if book, err := model.FindOwnedBook(id); err != nil {
 		return nil, err
+	} else if book == nil {
+		return nil, fmt.Errorf("owned book not found. id=%d", id)
+	} else {
+		log.Printf("update: %#v", update)
+		if err := config.DB.Model(book).Updates(update).Error; err != nil {
+			return nil, err
+		} else {
+			return book, nil
+		}
 	}
-
-	if err := config.DB.Model(book).Updates(update).Error; err != nil {
-		return nil, err
-	}
-
-	return book, nil
 }

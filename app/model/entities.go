@@ -22,7 +22,7 @@ type Book struct {
 	OriginalTitle null.String         `gorm:"size:255" json:"originalTitle,omitempty"`
 	Contents      null.String         `gorm:"size:8192" json:"contents,omitempty"`
 	Url           null.String         `gorm:"size:1024" json:"url,omitempty"`
-	PubDate       null.Time           `json:"pubDate,omitempty"`
+	PubDate       null.String         `json:"pubDate,omitempty"`
 	Authors       null.String         `gorm:"size:255" json:"authors,omitempty"`
 	Translators   null.String         `gorm:"size:255" json:"translators,omitempty"`
 	Publisher     null.String         `gorm:"size:255" json:"publisher,omitempty"`
@@ -35,20 +35,20 @@ func (b *Book) TableName() string {
 	return "books"
 }
 
-type InterestBooks struct {
+type InterestBook struct {
 	BaseModel
 	LoginID string `gorm:"type:varchar(40);unique_index:interest_books_uq;not null"`
 	Isbn    string `gorm:"type:varchar(13);unique_index:interest_books_uq;not null"`
 }
 
-func (c *InterestBooks) TableName() string { return "interest_books" }
+func (c *InterestBook) TableName() string { return "interest_books" }
 
 type OwnedBook struct {
 	BaseModel
 	Isbn         string              `gorm:"size:13;unique" json:"Isbn13"`
 	Owner        null.String         `gorm:"size:255" json:"owner"`
-	AcquiredAt   null.Time           `json:"acquiredAt"`
-	ScannedAt    null.Time           `json:"scannedAt"`
+	AcquiredAt   null.String         `json:"acquiredAt"`
+	ScannedAt    null.String         `json:"scannedAt"`
 	PaidPrice    decimal.NullDecimal `gorm:"type:decimal(20,2)"`
 	ActualPages  null.Int            `json:"actualPages"`
 	HasPaperBook bool                `json:"hasPaperBook"`

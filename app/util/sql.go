@@ -4,6 +4,7 @@ import (
 	"github.com/shopspring/decimal"
 	"gopkg.in/guregu/null.v3"
 	"strings"
+	"time"
 )
 
 func NullTimeFromString(s string) null.Time {
@@ -12,6 +13,10 @@ func NullTimeFromString(s string) null.Time {
 	} else {
 		return null.TimeFrom(t)
 	}
+}
+
+func NullTime(t time.Time) null.Time {
+	return null.NewTime(t, true)
 }
 
 func NullString(s string) null.String {
@@ -47,9 +52,19 @@ func NullInt(i int64) null.Int {
 	return null.NewInt(i, i != 0)
 }
 
+func NullBool(b bool) null.Bool {
+	return null.NewBool(b, true)
+}
+
 func NullDecimal(d decimal.Decimal) decimal.NullDecimal {
 	return decimal.NullDecimal{
 		Decimal: d,
+		Valid:   true,
+	}
+}
+func NullDecimalFromFloat(f float64) decimal.NullDecimal {
+	return decimal.NullDecimal{
+		Decimal: decimal.NewFromFloat(f),
 		Valid:   true,
 	}
 }

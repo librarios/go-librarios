@@ -3,7 +3,6 @@ package plugin
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/librarios/go-librarios/app/util"
 	"github.com/shopspring/decimal"
 	"io/ioutil"
 	"log"
@@ -84,7 +83,7 @@ func (k *Kakao) toBook(doc KakaoDocument) *Book {
 	book.Title = doc.Title
 	book.Contents = doc.Contents
 	book.Url = doc.Url
-	book.PubDate = util.NullTimeFromString(doc.Datetime)
+	book.PubDate = doc.Datetime
 	book.Authors = doc.Authors
 	book.Publisher = doc.Publisher
 	book.Translators = doc.Translators

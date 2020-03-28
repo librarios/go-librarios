@@ -2,7 +2,6 @@ package plugin
 
 import (
 	"github.com/shopspring/decimal"
-	"gopkg.in/guregu/null.v3"
 )
 
 type Book struct {
@@ -13,7 +12,7 @@ type Book struct {
 	OriginalTitle string          `json:"originalTitle,omitempty"`
 	Contents      string          `json:"contents,omitempty"`
 	Url           string          `json:"url,omitempty"`
-	PubDate       null.Time       `json:"pubDate,omitempty"`
+	PubDate       string          `json:"pubDate,omitempty"`
 	Authors       []string        `json:"authors,omitempty"`
 	Translators   []string        `json:"translators,omitempty"`
 	Publisher     string          `json:"publisher,omitempty"`

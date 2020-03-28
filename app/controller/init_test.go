@@ -8,9 +8,7 @@ import (
 	"github.com/librarios/go-librarios/app/config"
 	"github.com/librarios/go-librarios/app/model"
 	"github.com/librarios/go-librarios/app/plugin"
-	"github.com/librarios/go-librarios/app/service"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -20,38 +18,23 @@ import (
 	"time"
 )
 
-
-// RequestLoggerMiddleware returns middleware that logs request body.
-func RequestLoggerMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var buf bytes.Buffer
-		tee := io.TeeReader(c.Request.Body, &buf)
-		body, _ := ioutil.ReadAll(tee)
-		c.Request.Body = ioutil.NopCloser(&buf)
-		log.Printf("body: %s", string(body))
-		log.Printf("header: %s", c.Request.Header)
-		c.Next()
-	}
-}
-
 // TestServer is a gin-gonic server for testing
 type TestServer struct {
-	r           *gin.Engine
-	bookService service.IBookService
+	r *gin.Engine
 }
 
 // Init initializes gin-gonic server
 func (t *TestServer) Init() {
 	r := gin.New()
+
+	// middleware
+	addMiddlewares(r)
 	r.Use(RequestLoggerMiddleware())
 
-	bookService := service.NewBookService()
-
 	cacheStore := persistence.NewInMemoryStore(time.Second)
-	addEndpoints(r, cacheStore, bookService)
+	addEndpoints(r, cacheStore)
 
 	t.r = r
-	t.bookService = bookService
 }
 
 // Get sends GET http request to testServer
