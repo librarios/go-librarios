@@ -4,6 +4,8 @@ github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/denisenkom/go-mssqldb v0.0.0-20191124224453-732737034ffd/go.mod h1:xbL0rPBG9cCiLr28tMa8zpbdarY27NDyej4t/EjAShU=
 github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5/go.mod h1:a2zkGnVExMxdzMo3M0Hi/3sEU+cWnZpSni0O6/Yb/P0=
+github.com/friendsofgo/graphiql v0.2.2 h1:ccnuxpjgIkB+Lr9YB2ZouiZm7wvciSfqwpa9ugWzmn0=
+github.com/friendsofgo/graphiql v0.2.2/go.mod h1:8Y2kZ36AoTGWs78+VRpvATyt3LJBx0SZXmay80ZTRWo=
 github.com/gin-contrib/cache v1.1.0 h1:lM8B4YtzdQQM6ThTlvtNPeBNfW1mNdh/CMFQfenH1dk=
 github.com/gin-contrib/cache v1.1.0/go.mod h1:9ylpYjLq309/y5hTpyuDxfPG+V6QlSB56vrWe6OhoLQ=
 github.com/gin-contrib/cors v1.3.1 h1:doAsuITavI4IOcd0Y19U4B+O0dNWihRyX//nn4sEmgA=

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/friendsofgo/graphiql"
 	"github.com/gin-gonic/gin"
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
@@ -131,17 +132,10 @@ var mutationType = graphql.NewObject(graphql.ObjectConfig{
 	},
 })
 
-var subscriptionType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "RootSubscription",
-	Fields: graphql.Fields{
-	},
-})
-
 var schema, _ = graphql.NewSchema(
 	graphql.SchemaConfig{
-		Query:        queryType,
-		Mutation:     mutationType,
-		Subscription: subscriptionType,
+		Query:    queryType,
+		Mutation: mutationType,
 	},
 )
 
@@ -152,6 +146,16 @@ func GraphqlHandler() gin.HandlerFunc {
 		Pretty: true,
 	})
 
+	return func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
+	}
+}
+
+func GraphiqlHandler(graphqlEndpoint string) gin.HandlerFunc {
+	h, err := graphiql.NewGraphiqlHandler(graphqlEndpoint)
+	if err != nil {
+		panic(err)
+	}
 	return func(c *gin.Context) {
 		h.ServeHTTP(c.Writer, c.Request)
 	}

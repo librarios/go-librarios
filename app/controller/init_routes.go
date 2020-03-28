@@ -47,6 +47,6 @@ func addEndpoints(
 	r.PATCH("/books/own/:id", UpdateOwnedBook())
 	r.PATCH("/books/book/:id", UpdateBook())
 
-	g := r.Group("/graphql")
-	g.POST("", GraphqlHandler())
+	r.Group("/graphql").POST("", GraphqlHandler())
+	r.Group("/graphiql").GET("", GraphiqlHandler("/graphql"))
 }
