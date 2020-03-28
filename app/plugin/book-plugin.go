@@ -6,10 +6,10 @@ import (
 )
 
 type Book struct {
-	ISBN13        string          `json:"isbn13,omitempty"`
-	ISBN10        string          `json:"isbn10,omitempty"`
+	Isbn13        string          `json:"isbn13,omitempty"`
+	Isbn10        string          `json:"isbn10,omitempty"`
 	Title         string          `json:"title,omitempty"`
-	OriginalISBN  string          `json:"originalISBN,omitempty"`
+	OriginalIsbn  string          `json:"originalIsbn,omitempty"`
 	OriginalTitle string          `json:"originalTitle,omitempty"`
 	Contents      string          `json:"contents,omitempty"`
 	Url           string          `json:"url,omitempty"`
@@ -23,7 +23,7 @@ type Book struct {
 }
 
 type BookPlugin interface {
-	FindByISBN(string) ([]*Book, error)
+	FindByIsbn(string) ([]*Book, error)
 	FindByPerson(string) ([]*Book, error)
 	FindByPublisher(string) ([]*Book, error)
 	FindByTitle(string) ([]*Book, error)

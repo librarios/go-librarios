@@ -4,11 +4,11 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// FindBookByISBN finds a book with matching ISBN.
+// FindBookByIsbn finds a book with matching Isbn.
 // returns (nil, nil) if not found.
-func FindBookByISBN(isbn string) (*Book, error) {
+func FindBookByIsbn(isbn string) (*Book, error) {
 	book := new(Book)
-	book.ISBN13 = isbn
+	book.Isbn13 = isbn
 
 	if err := DB(nil).Where(book).First(book).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
@@ -19,11 +19,11 @@ func FindBookByISBN(isbn string) (*Book, error) {
 	return book, nil
 }
 
-// FindOwnedBookByISBN finds an owned book with matching ISBN.
+// FindOwnedBookByIsbn finds an owned book with matching Isbn.
 // returns (nil, nil) if not found.
-func FindOwnedBookByISBN(isbn string) (*OwnedBook, error) {
+func FindOwnedBookByIsbn(isbn string) (*OwnedBook, error) {
 	book := new(OwnedBook)
-	book.ISBN = isbn
+	book.Isbn = isbn
 
 	if err := DB(nil).Where(book).First(book).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
@@ -40,6 +40,6 @@ func DeleteAllBooks(tx *gorm.DB) error {
 }
 
 // DeleteAllOwnBooks deletes all owned books.
-func DeleteAllOwnedBooks(tx *gorm.DB, ) error {
+func DeleteAllOwnedBooks(tx *gorm.DB) error {
 	return DB(tx).Unscoped().Delete(OwnedBook{}).Error
 }

@@ -39,7 +39,7 @@ func addEndpoints(
 	bookService service.IBookService,
 ) {
 	r.GET("/book/search", cache.CachePage(cacheStore, 5*time.Minute, SearchBookHandlerFn(bookService)))
-	r.POST("/books", AddBookHandlerFn(bookService))
-	r.PATCH("/books/:isbn", UpdateBookHandlerFn(bookService))
-	r.PATCH("/books/:isbn/owned", UpdateOwnedBookHandlerFn(bookService))
+	r.POST("/books/own", AddOwnedBook(bookService))
+	r.PATCH("/books/own/:isbn", UpdateOwnedBook(bookService))
+	r.PATCH("/books/book/:isbn", UpdateBook(bookService))
 }

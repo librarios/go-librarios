@@ -76,9 +76,9 @@ func (k *Kakao) toBook(doc KakaoDocument) *Book {
 	for _, token := range strings.Split(doc.Isbn, " ") {
 		switch len(token) {
 		case 10:
-			book.ISBN10 = token
+			book.Isbn10 = token
 		case 13:
-			book.ISBN13 = token
+			book.Isbn13 = token
 		}
 	}
 	book.Title = doc.Title
@@ -95,7 +95,7 @@ func (k *Kakao) toBook(doc KakaoDocument) *Book {
 	return book
 }
 
-func (k *Kakao) FindByISBN(isbn string) ([]*Book, error) {
+func (k *Kakao) FindByIsbn(isbn string) ([]*Book, error) {
 	return k.searhBook("isbn", isbn)
 }
 

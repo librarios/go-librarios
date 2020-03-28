@@ -17,7 +17,7 @@ func deleteAllOwnedBooks() {
 	_ = model.DeleteAllOwnedBooks(nil)
 }
 
-func TestAddBookIntegration(t *testing.T) {
+func TestAddOwnedBookIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test")
 	}
@@ -26,19 +26,17 @@ func TestAddBookIntegration(t *testing.T) {
 	deleteAllOwnedBooks()
 
 	Convey("addBook", t, func() {
-		body := service.AddBookCommand{
-			ISBN:  "9788960778320",
-			Owner: "foo",
+		body := service.AddOwnedBook{
+			Isbn: "9788960778320",
 		}
 		var result struct {
-			Data *model.Book
+			Data *model.OwnedBook
 		}
-		rw := testServer.Post("/books", body, &result)
+		rw := testServer.Post("/books/own", body, &result)
 
 		book := result.Data
 		So(rw.Code, ShouldEqual, http.StatusCreated)
-		So(book.ISBN13, ShouldEqual, body.ISBN)
-		So(book.Title, ShouldContainSubstring, "The Go Programming Language")
+		So(book.Isbn, ShouldEqual, body.Isbn)
 	})
 }
 
@@ -46,23 +44,25 @@ func TestUpdateBookSpec(t *testing.T) {
 	deleteAllBooks()
 
 	isbn := "9788960778320"
-	_ = model.Save(nil, &model.Book{ISBN13: isbn}, true)
+	_ = model.Save(nil, &model.Book{Isbn13: isbn}, true)
 
 	Convey("updateBook", t, func() {
 		body := gin.H{
 			"title":   "foo",
 			"authors": "tom,james",
 			"dummy":   "foo,bar",
+			"price": 100,
 		}
 		var result struct {
 			Data *model.Book
 		}
-		rw := testServer.Patch(fmt.Sprintf("/books/%s", isbn), body, &result)
+		rw := testServer.Patch(fmt.Sprintf("/books/book/%s", isbn), body, &result)
 
 		book := result.Data
 		So(rw.Code, ShouldEqual, http.StatusOK)
 		So(book.Title, ShouldEqual, body["title"])
 		So(book.Authors.String, ShouldEqual, body["authors"])
+		So(book.Price.Decimal.IntPart(), ShouldEqual, body["price"])
 	})
 }
 
@@ -70,7 +70,7 @@ func TestUpdateOwnedBookSpec(t *testing.T) {
 	deleteAllOwnedBooks()
 
 	isbn := "9788960778320"
-	_ = model.Save(nil, &model.OwnedBook{ISBN: isbn}, true)
+	_ = model.Save(nil, &model.OwnedBook{Isbn: isbn}, true)
 
 	Convey("updateOwnedBook", t, func() {
 		body := gin.H{
@@ -81,7 +81,7 @@ func TestUpdateOwnedBookSpec(t *testing.T) {
 		var result struct {
 			Data *model.OwnedBook
 		}
-		rw := testServer.Patch(fmt.Sprintf("/books/%s/owned", isbn), body, &result)
+		rw := testServer.Patch(fmt.Sprintf("/books/own/%s", isbn), body, &result)
 
 		book := result.Data
 		So(rw.Code, ShouldEqual, http.StatusOK)

@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/librarios/go-librarios/app/plugin"
+	"github.com/librarios/go-librarios/app/model"
 	. "github.com/smartystreets/goconvey/convey"
 	"net/http"
 	"testing"
@@ -14,7 +14,7 @@ func TestBookSearchIntegration(t *testing.T) {
 
 	Convey("search by isbn", t, func() {
 		var result struct {
-			Data []*plugin.Book
+			Data []*model.Book
 		}
 		rw := testServer.Get("/book/search?isbn=9788960778320", &result)
 

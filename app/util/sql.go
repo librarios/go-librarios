@@ -50,6 +50,6 @@ func NullInt(i int64) null.Int {
 func NullDecimal(d decimal.Decimal) decimal.NullDecimal {
 	return decimal.NullDecimal{
 		Decimal: d,
-		Valid: true,
+		Valid:   true,
 	}
 }

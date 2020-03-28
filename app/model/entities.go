@@ -15,10 +15,10 @@ type BaseModel struct {
 
 type Book struct {
 	BaseModel
-	ISBN13        string              `gorm:"size:13;unique" json:"isbn13,omitempty"`
-	ISBN10        null.String         `gorm:"size:10" json:"isbn10,omitempty"`
+	Isbn13        string              `gorm:"size:13;unique" json:"isbn13,omitempty"`
+	Isbn10        null.String         `gorm:"size:10" json:"isbn10,omitempty"`
 	Title         string              `gorm:"size:255" json:"title,omitempty"`
-	OriginalISBN  null.String         `gorm:"size:13" json:"originalISBN,omitempty"`
+	OriginalIsbn  null.String         `gorm:"size:13" json:"originalIsbn,omitempty"`
 	OriginalTitle null.String         `gorm:"size:255" json:"originalTitle,omitempty"`
 	Contents      null.String         `gorm:"size:8192" json:"contents,omitempty"`
 	Url           null.String         `gorm:"size:1024" json:"url,omitempty"`
@@ -45,7 +45,7 @@ func (c *InterestBooks) TableName() string { return "interest_books" }
 
 type OwnedBook struct {
 	BaseModel
-	ISBN         string              `gorm:"size:13;unique" json:"ISBN13"`
+	Isbn         string              `gorm:"size:13;unique" json:"Isbn13"`
 	Owner        null.String         `gorm:"size:255" json:"owner"`
 	AcquiredAt   null.Time           `json:"acquiredAt"`
 	ScannedAt    null.Time           `json:"scannedAt"`

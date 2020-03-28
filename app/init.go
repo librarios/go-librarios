@@ -30,7 +30,6 @@ func StartServer(configFilename string) {
 		model.AutoMigrate()
 	}
 
-
 	defer config.CloseDB()
 
 	// set gin mode

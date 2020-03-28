@@ -1,7 +1,7 @@
 package app
 
 type KakaoBookResponse struct {
-	ISBN          string
+	Isbn          string
 	Title         string
 	Contents      string
 	Url           string
